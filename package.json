@@ -1,0 +1,27 @@
+{
+  "name": "static-boilerplate",
+  "version": "1.0.0",
+  "description": "My markup template for a quick start to build static projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dench1k/static-boilerplate.git"
+  },
+  "keywords": [
+    "boilerplate",
+    "markup",
+    "gulp"
+  ],
+  "author": "dench1k <denmoskvitin@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dench1k/static-boilerplate/issues"
+  },
+  "homepage": "https://github.com/dench1k/static-boilerplate#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
+}
