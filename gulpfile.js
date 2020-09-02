@@ -6,10 +6,12 @@ const sourcemaps = require('gulp-sourcemaps');
 const shorthand = require('gulp-shorthand');
 const autoprefixer = require('gulp-autoprefixer');
 const rename = require("gulp-rename");
+const babel = require('gulp-babel');
+const terser = require('gulp-terser');
 /**
  * considering set of plugins
  */
-// const babel = require('gulp-babel');
+
 // const uglify = require('gulp-uglify');
 // const rename = require('gulp-rename');
 // const del = require('delete');
@@ -22,7 +24,8 @@ function html() {
 }
 
 function styles() {
-  return src('src/sass/*.scss')
+  return src('src/sass/*.{scss, sass}')
+    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer({
@@ -40,6 +43,20 @@ function styles() {
     .pipe(dest('build/css'))
 }
 
+function scripts(cb) {
+  src('src/js/app.js')
+    .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(babel({
+      presets: ['@babel/env']
+    }))
+    .pipe(terser())
+    .pipe(sourcemaps.write())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(dest('build/js'))
+  return cb()
+}
+
 function clean(cb) {
   cb();
 }
@@ -51,4 +68,5 @@ function build(cb) {
 exports.build = build;
 exports.html = html;
 exports.styles = styles;
+exports.scripts = scripts;
 exports.default = series(clean, build);
