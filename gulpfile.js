@@ -8,6 +8,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const rename = require("gulp-rename");
 const babel = require('gulp-babel');
 const terser = require('gulp-terser');
+const imagemin = require('gulp-imagemin')
 /**
  * considering set of plugins
  */
@@ -55,6 +56,25 @@ function scripts(cb) {
     .pipe(rename({suffix: '.min'}))
     .pipe(dest('build/js'))
   return cb()
+}
+
+function images() {
+  return src('src/images/*.{gif,png,jpg,svg,webp}')
+    .pipe(imagemin([
+      imagemin.gifsicle({ interlaced: true }),
+      imagemin.mozjpeg({
+        quality: 75,
+        progressive: true
+      }),
+      imagemin.optipng({ optimizationLevel: 5 }),
+      imagemin.svgo({
+        plugins: [
+          { removeViewBox: true },
+          { cleanupIDs: false }
+        ]
+      })
+    ]))
+    .pipe(dest('build/images'))
 }
 
 function clean(cb) {
