@@ -59,7 +59,7 @@ function scripts(cb) {
 }
 
 function images() {
-  return src('src/images/*.{gif,png,jpg,svg,webp}')
+  return src('src/images/*.{gif,png,jpg,jpeg,svg,webp}')
     .pipe(imagemin([
       imagemin.gifsicle({ interlaced: true }),
       imagemin.mozjpeg({
@@ -89,4 +89,5 @@ exports.build = build;
 exports.html = html;
 exports.styles = styles;
 exports.scripts = scripts;
+exports.images = images;
 exports.default = series(clean, build);
