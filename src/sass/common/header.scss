@@ -3,7 +3,6 @@
 header {
   width: 220px;
   margin: 0 auto;
-  background-color: red;
 
   @include media-tablet {
     width: 500px;
