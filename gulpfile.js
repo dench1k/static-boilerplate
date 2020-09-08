@@ -2,8 +2,7 @@ const {watch, series, parallel, src, dest} = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
 const cleanCSS = require('gulp-clean-css');
-const sourcemaps = require('gulp-sourcemaps');
-const shorthand = require('gulp-shorthand');
+//const sourcemaps = require('gulp-sourcemaps');
 const autoprefixer = require('gulp-autoprefixer');
 const rename = require("gulp-rename");
 const babel = require('gulp-babel');
@@ -11,6 +10,7 @@ const terser = require('gulp-terser');
 const imagemin = require('gulp-imagemin')
 const del = require('del');
 const server = require('browser-sync').create();
+
 /**
  * considering set of plugins
  */
@@ -24,7 +24,7 @@ function setMode(isProduction = false) {
 }
 
 function html() {
-  return src('src/html/*.html')
+  return src('src/html/**/*.html')
     .pipe(plumber())
     .pipe(dest('build'))
 }
@@ -34,62 +34,62 @@ function fonts() {
     .pipe(dest('build/fonts'))
 }
 
-function styles() {
-  return src('src/sass/*.{scss, sass}')
+function styles(cb) {
+  src('src/sass/**/*.{scss, sass}', {sourcemaps: true})
     .pipe(plumber())
-    .pipe(sourcemaps.init())
+    //.pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer({
       cascade: false
     }))
-    /*.pipe(shorthand())*/
     .pipe(cleanCSS({
       debug: true,
       compatibility: '*'
     }, details => {
       console.log(`${details.name}: Original size:${details.stats.originalSize} - Minified size: ${details.stats.minifiedSize}`)
     }))
-    .pipe(sourcemaps.write())
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(dest('build/css'))
+    //.pipe(sourcemaps.write())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(dest('build/css', {sourcemaps: true}))
+  return cb();
 }
 
 function scripts(cb) {
-  src('src/js/app.js')
+  src('src/js/**/*.js', {sourcemaps: true})
     .pipe(plumber())
-    .pipe(sourcemaps.init())
+    //.pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['@babel/env']
     }))
     .pipe(terser())
-    .pipe(sourcemaps.write())
+    //.pipe(sourcemaps.write())
     .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/js'))
-  return cb()
+    .pipe(dest('build/js', {sourcemaps: true}))
+  return cb();
 }
 
-function images() {
-  return src('src/images/*.{gif,png,jpg,jpeg,svg,webp}')
+function images(cb) {
+  src('src/images/**/*.{gif,png,jpg,jpeg,svg,webp}')
     .pipe(plumber())
     .pipe(imagemin([
-      imagemin.gifsicle({ interlaced: true }),
+      imagemin.gifsicle({interlaced: true}),
       imagemin.mozjpeg({
         quality: 75,
         progressive: true
       }),
-      imagemin.optipng({ optimizationLevel: 5 }),
+      imagemin.optipng({optimizationLevel: 5}),
       imagemin.svgo({
         plugins: [
-          { removeViewBox: true },
-          { cleanupIDs: false }
+          {removeViewBox: true},
+          {cleanupIDs: false}
         ]
       })
     ]))
     .pipe(dest('build/images'))
+  return cb();
 }
 
 function clean(cb) {
-  console.log('clean');
   return del('build').then(() => {
     cb();
   });

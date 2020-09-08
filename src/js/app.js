@@ -1,8 +1,16 @@
-class App {
-  method() {
-    return [1,2,3].map(n => n ** 2);
+const writeMsg = (msg) => msg;
+console.log(writeMsg("test"));
+
+class Egz {
+  constructor() {
+    this.make = "egz";
+  }
+
+  render() {
+    console.log(this.make);
   }
 }
 
-const app = new App();
-app.method();
+const example = new Egz();
+
+example.render();
