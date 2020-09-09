@@ -1,0 +1,23 @@
+@mixin media-tablet {
+  @media (max-width: $mw-768) {
+    @content;
+  }
+}
+
+@mixin media-tablet-horizontal {
+  @media (max-width: $mw-1024) {
+    @content;
+  }
+}
+
+@mixin media-laptop {
+  @media (max-width: $mw-1366) {
+    @content;
+  }
+}
+
+@mixin media-custom($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}

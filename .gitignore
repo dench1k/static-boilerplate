@@ -2,6 +2,9 @@
 .vscode
 .idea
 
+# Source Maps
+/build/**/*.map
+
 # Logs
 logs
 *.log

@@ -1,13 +1,15 @@
 const {watch, series, parallel, src, dest, lastRun} = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
-const cleanCSS = require('gulp-clean-css');
-//const sourcemaps = require('gulp-sourcemaps');
+const concat = require('gulp-concat');
+const cleancss = require('gulp-clean-css');
 const autoprefixer = require('gulp-autoprefixer');
 const rename = require("gulp-rename");
 const babel = require('gulp-babel');
 const terser = require('gulp-terser');
-const imagemin = require('gulp-imagemin')
+const imagemin = require('gulp-imagemin');
+const webp = require('gulp-webp');
+const svgstore = require('gulp-svgstore');
 const del = require('del');
 const server = require('browser-sync').create();
 
@@ -35,35 +37,26 @@ function fonts() {
 }
 
 function styles() {
-  return src('src/sass/**/*.{scss,sass,css}', {sourcemaps: true})
+  return src('src/sass/styles.scss', {sourcemaps: true})
     .pipe(plumber())
-    //.pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer({
       cascade: false
     }))
-    .pipe(cleanCSS({
-      debug: true,
-      compatibility: '*'
-    }, details => {
-      console.log(`${details.name}: Original size:${details.stats.originalSize} - Minified size: ${details.stats.minifiedSize}`)
-    }))
-    //.pipe(sourcemaps.write())
+    .pipe(cleancss( {level: { 1: { specialComments: 0 } },/* format: 'beautify' */ }))
     .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/css', {sourcemaps: true}));
+    .pipe(dest('build/css', {sourcemaps: "."}))
 }
 
 function scripts() {
   return src('src/js/**/*.js', {sourcemaps: true})
     .pipe(plumber())
-    //.pipe(sourcemaps.init())
+    .pipe(concat('app.min.js'))
     .pipe(babel({
       presets: ['@babel/env']
     }))
     .pipe(terser())
-    //.pipe(sourcemaps.write())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/js', {sourcemaps: true}))
+    .pipe(dest('build/js', {sourcemaps: "."}))
 }
 
 function images() {
@@ -82,7 +75,9 @@ function images() {
           {cleanupIDs: false}
         ]
       })
-    ]))
+    ], {
+      verbose: true
+    }))
     .pipe(dest('build/images'))
 }
 
@@ -90,31 +85,30 @@ function clean() {
   return del('build');
 }
 
-function readyReload(cb) {
+function refresh(cb) {
   server.reload();
   cb();
 }
 
 function serve(cb) {
   server.init({
-    server: 'build',
+    server: 'build/',
     browser: "chrome",
     notify: false,
     open: true,
-    cors: true
+    cors: true,
+    ui: false
   })
-  watch('src/images/**/*.{gif,png,jpg,svg,webp}', series(images, readyReload))
-  watch('src/sass/**/*.{scss,sass,css}', series(styles, cb => src('build/css').pipe(server.stream()).on('end', cb)))
-  watch('src/js/**/*.js', series(scripts, readyReload))
-  watch('src/html/**/*.html', series(html, readyReload))
+  watch('src/images/**/*.{gif,png,jpg,svg,webp}', series(images, refresh));
+  watch('src/sass/**/*.{scss,sass,css}', series(styles, refresh));
+  watch('src/js/**/*.js', series(scripts, refresh));
+  watch('src/html/**/*.html', series(html, refresh));
   cb();
 }
 
 const dev = parallel(html, styles, scripts, fonts, images);
 const build = series(clean, dev);
 
-
-exports.build = build;
 exports.html = html;
 exports.fonts = fonts;
 exports.styles = styles;
