@@ -1,4 +1,4 @@
-const {watch, series, parallel, src, dest} = require("gulp");
+const {watch, series, parallel, src, dest, lastRun} = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
 const cleanCSS = require('gulp-clean-css');
@@ -34,8 +34,8 @@ function fonts() {
     .pipe(dest('build/fonts'))
 }
 
-function styles(cb) {
-  src('src/sass/**/*.{scss, sass}', {sourcemaps: true})
+function styles() {
+  return src('src/sass/**/*.{scss,sass,css}', {sourcemaps: true})
     .pipe(plumber())
     //.pipe(sourcemaps.init())
     .pipe(sass())
@@ -50,12 +50,11 @@ function styles(cb) {
     }))
     //.pipe(sourcemaps.write())
     .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/css', {sourcemaps: true}))
-  return cb();
+    .pipe(dest('build/css', {sourcemaps: true}));
 }
 
-function scripts(cb) {
-  src('src/js/**/*.js', {sourcemaps: true})
+function scripts() {
+  return src('src/js/**/*.js', {sourcemaps: true})
     .pipe(plumber())
     //.pipe(sourcemaps.init())
     .pipe(babel({
@@ -65,11 +64,10 @@ function scripts(cb) {
     //.pipe(sourcemaps.write())
     .pipe(rename({suffix: '.min'}))
     .pipe(dest('build/js', {sourcemaps: true}))
-  return cb();
 }
 
-function images(cb) {
-  src('src/images/**/*.{gif,png,jpg,jpeg,svg,webp}')
+function images() {
+  return src('src/images/**/*.{gif,png,jpg,jpeg,svg,webp},', {since: lastRun(images)})
     .pipe(plumber())
     .pipe(imagemin([
       imagemin.gifsicle({interlaced: true}),
@@ -86,13 +84,10 @@ function images(cb) {
       })
     ]))
     .pipe(dest('build/images'))
-  return cb();
 }
 
-function clean(cb) {
-  return del('build').then(() => {
-    cb();
-  });
+function clean() {
+  return del('build');
 }
 
 function readyReload(cb) {
@@ -109,10 +104,10 @@ function serve(cb) {
     cors: true
   })
   watch('src/images/**/*.{gif,png,jpg,svg,webp}', series(images, readyReload))
-  watch('src/sass/**/*.scss', series(styles, cb => src('build/css').pipe(server.stream()).on('end', cb)))
+  watch('src/sass/**/*.{scss,sass,css}', series(styles, cb => src('build/css').pipe(server.stream()).on('end', cb)))
   watch('src/js/**/*.js', series(scripts, readyReload))
   watch('src/html/**/*.html', series(html, readyReload))
-  return cb();
+  cb();
 }
 
 const dev = parallel(html, styles, scripts, fonts, images);
