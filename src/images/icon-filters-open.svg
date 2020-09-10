@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.53 11.99" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd">
+  <defs>
+    <style>
+      .str0{stroke:#fff;stroke-width:1.19;stroke-miterlimit:22.9256}.fil0{fill:none}.fil1{fill:#fff;fill-rule:nonzero}
+    </style>
+  </defs>
+  <g id="Слой_x0020_1">
+    <g id="_2050200865616">
+      <path class="fil0 str0" d="M2.39.05v7.16"/>
+      <path class="fil1" d="M4.18 8.34H.6V7.15h3.58l.6.6-.6.6zm0-1.19h.6v.6l-.6-.6zm-.6 3V7.74h1.19v2.41l-.6.6-.6-.6zm1.19 0v.6h-.6l.6-.6zm-4.18-.6h3.58v1.19H.59l-.6-.6.6-.6zm0 1.19h-.6v-.6l.6.6zm.6-3v2.41H0V7.74l.6-.6.6.6zM0 7.74v-.6h.6l-.6.6z"/>
+      <path class="fil0 str0" d="M2.39 11.99v-1.84"/>
+      <g id="_2050200865072">
+        <path class="fil0 str0" d="M13.14.05v7.16"/>
+        <path class="fil1" d="M14.93 8.34h-3.58V7.15h3.58l.6.6-.6.6zm0-1.19h.6v.6l-.6-.6zm-.6 3V7.74h1.19v2.41l-.6.6-.6-.6zm1.19 0v.6h-.6l.6-.6zm-4.18-.6h3.58v1.19h-3.58l-.6-.6.6-.6zm0 1.19h-.6v-.6l.6.6zm.6-3v2.41h-1.19V7.74l.6-.6.6.6zm-1.19 0v-.6h.6l-.6.6z"/>
+        <path class="fil0 str0" d="M13.14 11.99v-1.84"/>
+      </g>
+      <g>
+        <path class="fil0 str0" d="M7.76 11.94V4.78"/>
+        <path class="fil1" d="M9.56 4.78H5.98V3.59h3.58l.6.6-.6.6zm.6-.6v.6h-.6l.6-.6zm0-2.41v2.41H8.97V1.77l.6-.6.6.6zm-.6-.6h.6v.6l-.6-.6zm-3.58 0h3.58v1.19H5.98l-.6-.6.6-.6zm-.6.6v-.6h.6l-.6.6zm0 2.41V1.77h1.19v2.41l-.6.6-.6-.6zm.6.6h-.6v-.6l.6.6z"/>
+        <path class="fil0 str0" d="M7.76 0v1.84"/>
+      </g>
+    </g>
+  </g>
+</svg>

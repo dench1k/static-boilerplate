@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "My markup template for a quick start to build static projects",
   "main": "index.js",
+  "browserslist": [
+    "last 3 versions",
+    "> 1%",
+    "not dead",
+    "not ie <= 11",
+    "Firefox ESR"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,21 +31,26 @@
   "devDependencies": {
     "@babel/core": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
+    "autoprefixer": "^9.8.6",
     "browser-sync": "^2.26.12",
+    "cssnano": "^4.1.10",
     "del": "^5.1.0",
     "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^7.0.1",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
     "gulp-imagemin": "^7.1.0",
     "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^8.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.1.0",
     "gulp-shorthand": "^1.1.0",
     "gulp-svgstore": "^7.0.1",
     "gulp-terser": "^1.4.0",
     "gulp-webp": "^4.0.1",
-    "node-sass": "^4.14.1"
-  }
+    "node-sass": "^4.14.1",
+    "postcss-flexbugs-fixes": "^4.2.1",
+    "postcss-media-minmax": "^4.0.0"
+  },
+  "dependencies": {}
 }

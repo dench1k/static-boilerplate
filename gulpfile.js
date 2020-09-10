@@ -2,8 +2,11 @@ const {watch, series, parallel, src, dest, lastRun} = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
 const concat = require('gulp-concat');
-const cleancss = require('gulp-clean-css');
-const autoprefixer = require('gulp-autoprefixer');
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
+const flexbugs = require('postcss-flexbugs-fixes');
+const minmax = require('postcss-media-minmax');
+const cssnano = require('cssnano');
 const rename = require("gulp-rename");
 const babel = require('gulp-babel');
 const terser = require('gulp-terser');
@@ -18,6 +21,10 @@ const server = require('browser-sync').create();
  */
 // const gulpif = require('gulp-if');
 
+const processors = [minmax(),
+  autoprefixer(),
+  flexbugs(), cssnano];
+
 function setMode(isProduction = false) {
   return cb => {
     process.env.NODE_ENV = isProduction ? 'production' : 'development'
@@ -26,7 +33,7 @@ function setMode(isProduction = false) {
 }
 
 function html() {
-  return src('src/html/**/*.html')
+  return src('src/*.html')
     .pipe(plumber())
     .pipe(dest('build'))
 }
@@ -40,10 +47,7 @@ function styles() {
   return src('src/sass/styles.scss', {sourcemaps: true})
     .pipe(plumber())
     .pipe(sass())
-    .pipe(autoprefixer({
-      cascade: false
-    }))
-    .pipe(cleancss( {level: { 1: { specialComments: 0 } },/* format: 'beautify' */ }))
+    .pipe(postcss(processors))
     .pipe(rename({suffix: '.min'}))
     .pipe(dest('build/css', {sourcemaps: "."}))
 }
@@ -60,7 +64,7 @@ function scripts() {
 }
 
 function images() {
-  return src('src/images/**/*.{gif,png,jpg,jpeg,svg,webp},', {since: lastRun(images)})
+  return src('src/images/**/*', {since: lastRun(images)})
     .pipe(plumber())
     .pipe(imagemin([
       imagemin.gifsicle({interlaced: true}),
@@ -78,7 +82,7 @@ function images() {
     ], {
       verbose: true
     }))
-    .pipe(dest('build/images'))
+    .pipe(dest('build/images'));
 }
 
 function clean() {
@@ -99,10 +103,10 @@ function serve(cb) {
     cors: true,
     ui: false
   })
-  watch('src/images/**/*.{gif,png,jpg,svg,webp}', series(images, refresh));
+  watch('src/images/**/*.{gif,png,jpg,jpeg,svg,webp}', series(images, refresh));
   watch('src/sass/**/*.{scss,sass,css}', series(styles, refresh));
   watch('src/js/**/*.js', series(scripts, refresh));
-  watch('src/html/**/*.html', series(html, refresh));
+  watch('src/*.html', series(html, refresh));
   cb();
 }
 
