@@ -22,22 +22,22 @@ const fileinclude = require("gulp-file-include");
 // const gulpif = require('gulp-if');
 
 // CONSTANTS
-const PARTIALS_DIR_PATH = "./src/partials";
+const SRC_DIR_NAME = "src";
+const BUILD_DIR_NAME = "build";
+const FONTS_DIR_NAME = "fonts";
+const SASS_DIR_NAME = "sass";
+const CSS_DIR_NAME = "css";
+const JS_DIR_NAME = "js";
+const IMG_DIR_NAME = "images";
+const ICONS_DIR_NAME = "icons";
 
-const OUTPUT_DIR_NAME = "dist";
-const OUTPUT_CSS_FILE_NAME = "main.css";
-const OUTPUT_JS_FILE_NAME = "main.js";
-const OUTPUT_JS_DIR_NAME = "js";
-const OUTPUT_IMG_DIR_NAME = "img";
-const OUTPUT_ASSETS_DIR_NAME = "assets";
-
-const STYLES_FILES = ["src/**/*.css"];
-const SCRIPTS_FILES = ["src/**/*.js"];
-const IMG_FILES = ["src/img/**/*"];
-const HTML_FILES = ["src/*.html"];
-const ASSETS_FILES = ["src/assets/**/*"];
-
-const processors = [autoprefixer(), flexbugs(), cssnano()];
+const processors = [
+  autoprefixer({
+    grid: true,
+  }),
+  flexbugs(),
+  cssnano(),
+];
 
 function setMode(isProduction = false) {
   return (cb) => {
@@ -47,33 +47,40 @@ function setMode(isProduction = false) {
 }
 
 function html() {
-  return src("src/*.html")
+  return src(`${SRC_DIR_NAME}/*.html`)
     .pipe(plumber())
-    .pipe(fileinclude({
-      prefix: `@@`,
-      basepath: `@root`,
-      context: { // глобальные переменные для include
-        test: `text`
-      }
-    }))
-    .pipe(dest("build"));
+    .pipe(
+      fileinclude({
+        prefix: `@@`,
+        basepath: `@root`,
+        context: {
+          // global variables for include
+          test: `text`,
+        },
+      })
+    )
+    .pipe(dest(BUILD_DIR_NAME));
 }
 
 function fonts() {
-  return src("src/fonts/*").pipe(dest("build/fonts"));
+  return src(`${SRC_DIR_NAME}/${FONTS_DIR_NAME}/*`).pipe(
+    dest(`${BUILD_DIR_NAME}/${FONTS_DIR_NAME}`)
+  );
 }
 
 function styles() {
-  return src("src/sass/styles.scss", { sourcemaps: true })
+  return src(`${SRC_DIR_NAME}/${SASS_DIR_NAME}/styles.scss`, {
+    sourcemaps: true,
+  })
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss(processors))
     .pipe(rename({ suffix: ".min" }))
-    .pipe(dest("build/css", { sourcemaps: "." }));
+    .pipe(dest(`${BUILD_DIR_NAME}/${CSS_DIR_NAME}`, { sourcemaps: "." }));
 }
 
 function scripts() {
-  return src("src/js/**/*.js", { sourcemaps: true })
+  return src(`${SRC_DIR_NAME}/${JS_DIR_NAME}/**/*.js`, { sourcemaps: true })
     .pipe(plumber())
     .pipe(concat("app.min.js"))
     .pipe(
@@ -82,11 +89,11 @@ function scripts() {
       })
     )
     .pipe(terser())
-    .pipe(dest("build/js", { sourcemaps: "." }));
+    .pipe(dest(`${BUILD_DIR_NAME}/${JS_DIR_NAME}`, { sourcemaps: "." }));
 }
 
 function images() {
-  return src("src/images/**/*", { since: lastRun(images) })
+  return src(`${SRC_DIR_NAME}/${IMG_DIR_NAME}/**/*`, { since: lastRun(images) })
     .pipe(plumber())
     .pipe(
       imagemin(
@@ -106,26 +113,28 @@ function images() {
         }
       )
     )
-    .pipe(dest("build/images"));
+    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}`));
 }
 
 // TODO: make automated
 function sprite() {
-  return src("src/images/icons/{icon-*,logo-*}.svg")
+  return src(
+    `${SRC_DIR_NAME}/${IMG_DIR_NAME}/${ICONS_DIR_NAME}/{icon-*,logo-*}.svg`
+  )
     .pipe(svgstore({ inlineSvg: true }))
-    .pipe(rename("sprite_auto.svg"))
-    .pipe(dest("build/images/icons"));
+    .pipe(rename(`sprite_auto.svg`))
+    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}/${ICONS_DIR_NAME}`));
 }
 
 // TODO: make automated
 function webp() {
-  return src("build/images/**/*.{png,jpg}")
+  return src(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}/**/*.{png,jpg}`)
     .pipe(webpPlugin({ quality: 85 }))
-    .pipe(dest("build/images"));
+    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}`));
 }
 
 function clean() {
-  return del("build");
+  return del(BUILD_DIR_NAME);
 }
 
 function refresh(cb) {
@@ -135,17 +144,23 @@ function refresh(cb) {
 
 function serve(cb) {
   server.init({
-    server: "build/",
+    server: `${BUILD_DIR_NAME}/`,
     browser: "chrome",
     notify: false,
     open: true,
     cors: true,
     ui: false,
   });
-  watch("src/images/**/*.{gif,png,jpg,jpeg,svg,webp}", series(images, refresh));
-  watch("src/sass/**/*.{scss,sass,css}", series(styles, refresh));
-  watch("src/js/**/*.js", series(scripts, refresh));
-  watch("src/*.html", series(html, refresh));
+  watch(
+    `${SRC_DIR_NAME}/${IMG_DIR_NAME}/**/*.{gif,png,jpg,jpeg,svg,webp}`,
+    series(images, refresh)
+  );
+  watch(
+    `${SRC_DIR_NAME}/${SASS_DIR_NAME}/**/*.{scss,sass,css}`,
+    series(styles, refresh)
+  );
+  watch(`${SRC_DIR_NAME}/${JS_DIR_NAME}/**/*.js`, series(scripts, refresh));
+  watch(`${SRC_DIR_NAME}/**/*.html`, series(html, refresh));
   cb();
 }
 
