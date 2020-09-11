@@ -1,91 +1,118 @@
-const {watch, series, parallel, src, dest, lastRun} = require("gulp");
+const { watch, series, parallel, src, dest, lastRun } = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
-const concat = require('gulp-concat');
-const postcss = require('gulp-postcss');
-const autoprefixer = require('autoprefixer');
-const flexbugs = require('postcss-flexbugs-fixes');
-const cssnano = require('cssnano');
+const concat = require("gulp-concat");
+const postcss = require("gulp-postcss");
+const autoprefixer = require("autoprefixer");
+const flexbugs = require("postcss-flexbugs-fixes");
+const cssnano = require("cssnano");
 const rename = require("gulp-rename");
-const babel = require('gulp-babel');
-const terser = require('gulp-terser');
-const imagemin = require('gulp-imagemin');
-const webpPlugin = require('gulp-webp');
-const svgstore = require('gulp-svgstore');
-const del = require('del');
-const server = require('browser-sync').create();
+const babel = require("gulp-babel");
+const terser = require("gulp-terser");
+const imagemin = require("gulp-imagemin");
+const webpPlugin = require("gulp-webp");
+const svgstore = require("gulp-svgstore");
+const del = require("del");
+const server = require("browser-sync").create();
+const fileinclude = require("gulp-file-include");
 
 /**
  * considering set of plugins
  */
 // const gulpif = require('gulp-if');
 
+// CONSTANTS
+const PARTIALS_DIR_PATH = "./src/partials";
+
+const OUTPUT_DIR_NAME = "dist";
+const OUTPUT_CSS_FILE_NAME = "main.css";
+const OUTPUT_JS_FILE_NAME = "main.js";
+const OUTPUT_JS_DIR_NAME = "js";
+const OUTPUT_IMG_DIR_NAME = "img";
+const OUTPUT_ASSETS_DIR_NAME = "assets";
+
+const STYLES_FILES = ["src/**/*.css"];
+const SCRIPTS_FILES = ["src/**/*.js"];
+const IMG_FILES = ["src/img/**/*"];
+const HTML_FILES = ["src/*.html"];
+const ASSETS_FILES = ["src/assets/**/*"];
+
 const processors = [autoprefixer(), flexbugs(), cssnano()];
 
 function setMode(isProduction = false) {
-  return cb => {
-    process.env.NODE_ENV = isProduction ? 'production' : 'development'
-    cb()
-  }
+  return (cb) => {
+    process.env.NODE_ENV = isProduction ? "production" : "development";
+    cb();
+  };
 }
 
 function html() {
-  return src('src/*.html')
+  return src("src/*.html")
     .pipe(plumber())
-    .pipe(dest('build'))
+    .pipe(fileinclude({
+      prefix: `@@`,
+      basepath: `@root`,
+      context: { // глобальные переменные для include
+        test: `text`
+      }
+    }))
+    .pipe(dest("build"));
 }
 
 function fonts() {
-  return src('src/fonts/*')
-    .pipe(dest('build/fonts'))
+  return src("src/fonts/*").pipe(dest("build/fonts"));
 }
 
 function styles() {
-  return src('src/sass/styles.scss', {sourcemaps: true})
+  return src("src/sass/styles.scss", { sourcemaps: true })
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss(processors))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/css', {sourcemaps: "."}))
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(dest("build/css", { sourcemaps: "." }));
 }
 
 function scripts() {
-  return src('src/js/**/*.js', {sourcemaps: true})
+  return src("src/js/**/*.js", { sourcemaps: true })
     .pipe(plumber())
-    .pipe(concat('app.min.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
+    .pipe(concat("app.min.js"))
+    .pipe(
+      babel({
+        presets: ["@babel/env"],
+      })
+    )
     .pipe(terser())
-    .pipe(dest('build/js', {sourcemaps: "."}))
+    .pipe(dest("build/js", { sourcemaps: "." }));
 }
 
 function images() {
-  return src('src/images/**/*', {since: lastRun(images)})
+  return src("src/images/**/*", { since: lastRun(images) })
     .pipe(plumber())
-    .pipe(imagemin([
-      imagemin.gifsicle({interlaced: true}),
-      imagemin.mozjpeg({
-        quality: 75,
-        progressive: true
-      }),
-      imagemin.optipng({optimizationLevel: 3}),
-      imagemin.svgo({
-        plugins: [
-          {removeViewBox: true},
-          {cleanupIDs: false}
-        ]
-      })
-    ], {
-      verbose: true
-    }))
-    .pipe(dest('build/images'));
+    .pipe(
+      imagemin(
+        [
+          imagemin.gifsicle({ interlaced: true }),
+          imagemin.mozjpeg({
+            quality: 75,
+            progressive: true,
+          }),
+          imagemin.optipng({ optimizationLevel: 3 }),
+          imagemin.svgo({
+            plugins: [{ removeViewBox: true }, { cleanupIDs: false }],
+          }),
+        ],
+        {
+          verbose: true,
+        }
+      )
+    )
+    .pipe(dest("build/images"));
 }
 
 // TODO: make automated
 function sprite() {
   return src("src/images/icons/{icon-*,logo-*}.svg")
-    .pipe(svgstore({inlineSvg: true}))
+    .pipe(svgstore({ inlineSvg: true }))
     .pipe(rename("sprite_auto.svg"))
     .pipe(dest("build/images/icons"));
 }
@@ -93,14 +120,13 @@ function sprite() {
 // TODO: make automated
 function webp() {
   return src("build/images/**/*.{png,jpg}")
-    .pipe(webpPlugin({quality: 85}))
+    .pipe(webpPlugin({ quality: 85 }))
     .pipe(dest("build/images"));
 }
 
 function clean() {
-  return del('build');
+  return del("build");
 }
-
 
 function refresh(cb) {
   server.reload();
@@ -109,17 +135,17 @@ function refresh(cb) {
 
 function serve(cb) {
   server.init({
-    server: 'build/',
+    server: "build/",
     browser: "chrome",
     notify: false,
     open: true,
     cors: true,
-    ui: false
-  })
-  watch('src/images/**/*.{gif,png,jpg,jpeg,svg,webp}', series(images, refresh));
-  watch('src/sass/**/*.{scss,sass,css}', series(styles, refresh));
-  watch('src/js/**/*.js', series(scripts, refresh));
-  watch('src/*.html', series(html, refresh));
+    ui: false,
+  });
+  watch("src/images/**/*.{gif,png,jpg,jpeg,svg,webp}", series(images, refresh));
+  watch("src/sass/**/*.{scss,sass,css}", series(styles, refresh));
+  watch("src/js/**/*.js", series(scripts, refresh));
+  watch("src/*.html", series(html, refresh));
   cb();
 }
 
