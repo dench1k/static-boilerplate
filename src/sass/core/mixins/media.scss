@@ -1,22 +1,63 @@
-@mixin media-tablet {
-  @media (max-width: $mw-768) {
+/* media mobile */
+@mixin --mobile {
+  @media (max-width: $mobile) {
     @content;
   }
 }
 
-@mixin media-tablet-horizontal {
-  @media (max-width: $mw-1024) {
+@mixin --mobile-large {
+  @media (max-width: $mobile-large) {
     @content;
   }
 }
 
-@mixin media-laptop {
-  @media (max-width: $mw-1366) {
+/* media tablet */
+@mixin --tablet {
+  @media (max-width: $tablet) {
     @content;
   }
 }
 
-@mixin media-custom($width) {
+@mixin --tablet-medium {
+  @media (max-width: $tablet-medium) {
+    @content;
+  }
+}
+
+@mixin --tablet-large {
+  @media (max-width: $tablet-large) {
+    @content;
+  }
+}
+
+/* media desktop */
+@mixin --desktop {
+  @media (max-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin --desktop-large {
+  @media (max-width: $desktop-large) {
+    @content;
+  }
+}
+
+@mixin --desktop-extra-large {
+  @media (max-width: $desktop-extra-large) {
+    @content;
+  }
+}
+
+/* media retina */
+@mixin --retina {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    @content;
+  }
+}
+
+/* media custom */
+@mixin --custom($width) {
   @media (max-width: $width) {
     @content;
   }
