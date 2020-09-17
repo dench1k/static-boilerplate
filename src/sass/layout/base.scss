@@ -3,7 +3,7 @@
  * [ BASE STYLES ]
  * =============================================================================
  */
-::-moz-selection {
+::selection {
   background: $text-selection-bg;
   color: $text-selection-c;
   text-shadow: none;
@@ -16,8 +16,8 @@
 }
 
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -32,14 +32,19 @@ html {
 body {
   background: $body-bg;
   color: $body-c;
-  font-family: $body-ff;
   font-size: $body-fz;
+  font-family: $body-ff;
   line-height: $body-lh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  line-height: $headings-lh;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: floor(($body-fz * $body-lh)) 0;
+  line-height: $headings-lh;
 }
 
 h1 {
@@ -83,7 +88,10 @@ small {
   font-size: $small-fz;
 }
 
-audio, canvas, img, video {
+audio,
+canvas,
+img,
+video {
   vertical-align: middle;
 }
 
@@ -92,61 +100,62 @@ img {
 }
 
 fieldset {
-  border: 0;
   margin: 0;
   padding: 0;
+  border: 0;
 }
 
 textarea {
   resize: vertical;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+::placeholder {
+  /* Firefox 19+ */
   color: #9d9e9e;
 }
 
-::-moz-placeholder { /* Firefox 19+ */
+:input-placeholder {
+  /* IE 10+ */
   color: #9d9e9e;
 }
 
-:-ms-input-placeholder { /* IE 10+ */
-  color: #9d9e9e;
-}
-
-:-moz-placeholder { /* Firefox 18- */
+:placeholder {
+  /* Firefox 18- */
   color: #9d9e9e;
 }
 
 body {
-  margin: 0;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 500% 500%;
-  animation: gradient 15s ease infinite;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 100vh;
+  margin: 0;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 500% 500%;
   font-size: 20px;
+  animation: gradient 15s ease infinite;
 }
 
 h1 {
+  @include media-desktop {
+    background-color: #f00;
+  }
   margin: 0;
   color: #fff;
   text-shadow: 0 0 4px rgba(255, 99, 71, 0.8);
-  @include --desktop {
-    background-color: red;
-  }
 }
-
 
 @keyframes gradient {
   0% {
     background-position: 0 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0 50%;
   }

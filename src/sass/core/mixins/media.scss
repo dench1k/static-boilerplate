@@ -1,63 +1,63 @@
 /* media mobile */
-@mixin --mobile {
+@mixin media-mobile {
   @media (max-width: $mobile) {
     @content;
   }
 }
 
-@mixin --mobile-large {
+@mixin media-mobile-large {
   @media (max-width: $mobile-large) {
     @content;
   }
 }
 
 /* media tablet */
-@mixin --tablet {
+@mixin media-tablet {
   @media (max-width: $tablet) {
     @content;
   }
 }
 
-@mixin --tablet-medium {
+@mixin media-tablet-medium {
   @media (max-width: $tablet-medium) {
     @content;
   }
 }
 
-@mixin --tablet-large {
+@mixin media-tablet-large {
   @media (max-width: $tablet-large) {
     @content;
   }
 }
 
 /* media desktop */
-@mixin --desktop {
+@mixin media-desktop {
   @media (max-width: $desktop) {
     @content;
   }
 }
 
-@mixin --desktop-large {
+@mixin media-desktop-large {
   @media (max-width: $desktop-large) {
     @content;
   }
 }
 
-@mixin --desktop-extra-large {
+@mixin media-desktop-extra-large {
   @media (max-width: $desktop-extra-large) {
     @content;
   }
 }
 
 /* media retina */
-@mixin --retina {
-  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@mixin media-retina {
+  @media (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     @content;
   }
 }
 
 /* media custom */
-@mixin --custom($width) {
+@mixin media-custom($width) {
   @media (max-width: $width) {
     @content;
   }

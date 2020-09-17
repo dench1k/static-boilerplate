@@ -11,7 +11,8 @@
     "Firefox ESR"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint:css": "stylelint \"src/**/*.scss\"",
+    "format:css": "prettier --write \"src/**/*.scss\" && stylelint \"src/**/*.scss\" --fix"
   },
   "repository": {
     "type": "git",
@@ -63,7 +64,7 @@
     "postcss-flexbugs-fixes": "^4.2.1",
     "prettier": "^2.1.2",
     "stylelint": "^13.7.1",
-    "stylelint-config-sass-guidelines": "^7.1.0"
+    "stylelint-order": "^4.1.0"
   },
   "dependencies": {},
   "husky": {
@@ -72,6 +73,10 @@
     }
   },
   "lint-staged": {
+    "src/sass/**/*.scss": [
+      "prettier --write",
+      "stylelint --fix"
+    ],
     "src/js/**/*.js": [
       "prettier --write",
       "eslint --fix"
