@@ -4,6 +4,7 @@ class Egz {
   constructor() {
     this.make = "egz";
   }
+
   render() {
     console.log(this.make);
   }
