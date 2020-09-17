@@ -68,11 +68,12 @@
   "dependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged npm test",
+      "pre-push": "lint-staged npm test"
     }
   },
   "lint-staged": {
-    ".js": [
+    "src/js/**/*.js": [
       "eslint --fix",
       "git add"
     ],
