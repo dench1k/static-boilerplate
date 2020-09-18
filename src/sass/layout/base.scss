@@ -9,12 +9,6 @@
   text-shadow: none;
 }
 
-::selection {
-  background: $text-selection-bg;
-  color: $text-selection-c;
-  text-shadow: none;
-}
-
 *,
 *::before,
 *::after {
@@ -139,7 +133,7 @@ body {
 }
 
 h1 {
-  @include media-desktop {
+  @include --desktop {
     background-color: #f00;
   }
   margin: 0;

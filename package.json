@@ -2,7 +2,6 @@
   "name": "static-boilerplate",
   "version": "1.0.0",
   "description": "My markup template for a quick start to build static projects",
-  "main": "index.js",
   "browserslist": [
     "last 3 versions",
     "> 1%",
@@ -11,8 +10,8 @@
     "Firefox ESR"
   ],
   "scripts": {
-    "lint:css": "stylelint \"src/**/*.scss\"",
-    "format:css": "prettier --write \"src/**/*.scss\" && stylelint \"src/**/*.scss\" --fix"
+    "lint:css": "stylelint \"./src/sass/**/*.scss\" --formatter verbose || echo \"lint faild for some file(s).\"",
+    "format:css": "prettier --write \"src/**/*.scss\" && stylelint \"src/**/*.scss\" --fix --formatter verbose || echo \"lint faild for some file(s).\""
   },
   "repository": {
     "type": "git",
@@ -64,7 +63,9 @@
     "postcss-flexbugs-fixes": "^4.2.1",
     "prettier": "^2.1.2",
     "stylelint": "^13.7.1",
-    "stylelint-order": "^4.1.0"
+    "stylelint-config-airbnb": "0.0.0",
+    "stylelint-order": "^4.1.0",
+    "stylelint-scss": "^3.18.0"
   },
   "dependencies": {},
   "husky": {

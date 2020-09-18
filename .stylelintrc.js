@@ -1,8 +1,14 @@
-{
+module.exports = {
+  "extends": ["stylelint-config-airbnb"],
   "plugins": [
-    "stylelint-order"
+    "stylelint-order",
+    "stylelint-scss"
   ],
+  "ignoreFiles": ["src/sass/layout/normalize.scss"],
   "rules": {
+    "number-leading-zero": null,
+    "at-rule-empty-line-before": null,
+    "rule-empty-line-before": null,
     "order/order": [
       [
         "dollar-variables",
