@@ -16,20 +16,15 @@ const del = require("del");
 const server = require("browser-sync").create();
 const fileinclude = require("gulp-file-include");
 
-/**
- * considering set of plugins
- */
-// const gulpif = require('gulp-if');
-
 // CONSTANTS
-const SRC_DIR_NAME = "src";
-const BUILD_DIR_NAME = "build";
-const FONTS_DIR_NAME = "fonts";
-const SASS_DIR_NAME = "sass";
-const CSS_DIR_NAME = "css";
-const JS_DIR_NAME = "js";
-const IMG_DIR_NAME = "images";
-const ICONS_DIR_NAME = "icons";
+const SRC_DIR = "src";
+const BUILD_DIR = "build";
+const FONTS_DIR = "fonts";
+const SASS_DIR = "sass";
+const CSS_DIR = "css";
+const JS_DIR = "js";
+const IMG_DIR = "images";
+const ICONS_DIR = "icons";
 
 const processors = [
   autoprefixer({
@@ -47,7 +42,7 @@ function setMode(isProduction = false) {
 }
 
 function html() {
-  return src(`${SRC_DIR_NAME}/*.html`)
+  return src(`${SRC_DIR}/*.html`)
     .pipe(plumber())
     .pipe(
       fileinclude({
@@ -59,28 +54,28 @@ function html() {
         },
       })
     )
-    .pipe(dest(BUILD_DIR_NAME));
+    .pipe(dest(BUILD_DIR));
 }
 
 function fonts() {
-  return src(`${SRC_DIR_NAME}/${FONTS_DIR_NAME}/*`).pipe(
-    dest(`${BUILD_DIR_NAME}/${FONTS_DIR_NAME}`)
+  return src(`${SRC_DIR}/${FONTS_DIR}/*`).pipe(
+    dest(`${BUILD_DIR}/${FONTS_DIR}`)
   );
 }
 
 function styles() {
-  return src(`${SRC_DIR_NAME}/${SASS_DIR_NAME}/styles.scss`, {
+  return src(`${SRC_DIR}/${SASS_DIR}/styles.scss`, {
     sourcemaps: true,
   })
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss(processors))
     .pipe(rename({ suffix: ".min" }))
-    .pipe(dest(`${BUILD_DIR_NAME}/${CSS_DIR_NAME}`, { sourcemaps: "." }));
+    .pipe(dest(`${BUILD_DIR}/${CSS_DIR}`, { sourcemaps: "." }));
 }
 
 function scripts() {
-  return src(`${SRC_DIR_NAME}/${JS_DIR_NAME}/**/*.js`, { sourcemaps: true })
+  return src(`${SRC_DIR}/${JS_DIR}/**/*.js`, { sourcemaps: true })
     .pipe(plumber())
     .pipe(concat("app.min.js"))
     .pipe(
@@ -89,11 +84,11 @@ function scripts() {
       })
     )
     .pipe(terser())
-    .pipe(dest(`${BUILD_DIR_NAME}/${JS_DIR_NAME}`, { sourcemaps: "." }));
+    .pipe(dest(`${BUILD_DIR}/${JS_DIR}`, { sourcemaps: "." }));
 }
 
 function images() {
-  return src(`${SRC_DIR_NAME}/${IMG_DIR_NAME}/**/*`, { since: lastRun(images) })
+  return src(`${SRC_DIR}/${IMG_DIR}/**/*`, { since: lastRun(images) })
     .pipe(plumber())
     .pipe(
       imagemin(
@@ -113,28 +108,28 @@ function images() {
         }
       )
     )
-    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}`));
+    .pipe(dest(`${BUILD_DIR}/${IMG_DIR}`));
 }
 
 // TODO: make automated
 function sprite() {
   return src(
-    `${SRC_DIR_NAME}/${IMG_DIR_NAME}/${ICONS_DIR_NAME}/{icon-*,logo-*}.svg`
+    `${SRC_DIR}/${IMG_DIR}/${ICONS_DIR}/{icon-*,logo-*}.svg`
   )
     .pipe(svgstore({ inlineSvg: true }))
     .pipe(rename(`sprite_auto.svg`))
-    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}/${ICONS_DIR_NAME}`));
+    .pipe(dest(`${BUILD_DIR}/${IMG_DIR}/${ICONS_DIR}`));
 }
 
 // TODO: make automated
 function webp() {
-  return src(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}/**/*.{png,jpg}`)
+  return src(`${BUILD_DIR}/${IMG_DIR}/**/*.{png,jpg}`)
     .pipe(webpPlugin({ quality: 85 }))
-    .pipe(dest(`${BUILD_DIR_NAME}/${IMG_DIR_NAME}`));
+    .pipe(dest(`${BUILD_DIR}/${IMG_DIR}`));
 }
 
 function clean() {
-  return del(BUILD_DIR_NAME);
+  return del(BUILD_DIR);
 }
 
 function refresh(cb) {
@@ -144,7 +139,7 @@ function refresh(cb) {
 
 function serve(cb) {
   server.init({
-    server: `${BUILD_DIR_NAME}/`,
+    server: `${BUILD_DIR}/`,
     browser: "chrome",
     notify: false,
     open: true,
@@ -152,15 +147,15 @@ function serve(cb) {
     ui: false,
   });
   watch(
-    `${SRC_DIR_NAME}/${IMG_DIR_NAME}/**/*.{gif,png,jpg,jpeg,svg,webp}`,
+    `${SRC_DIR}/${IMG_DIR}/**/*.{gif,png,jpg,jpeg,svg,webp}`,
     series(images, refresh)
   );
   watch(
-    `${SRC_DIR_NAME}/${SASS_DIR_NAME}/**/*.{scss,sass,css}`,
+    `${SRC_DIR}/${SASS_DIR}/**/*.{scss,sass,css}`,
     series(styles, refresh)
   );
-  watch(`${SRC_DIR_NAME}/${JS_DIR_NAME}/**/*.js`, series(scripts, refresh));
-  watch(`${SRC_DIR_NAME}/**/*.html`, series(html, refresh));
+  watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, refresh));
+  watch(`${SRC_DIR}/**/*.html`, series(html, refresh));
   cb();
 }
 

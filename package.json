@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint:css": "stylelint \"./src/sass/**/*.scss\" --formatter verbose || echo \"lint faild for some file(s).\"",
-    "format:css": "prettier --write \"src/**/*.scss\" && stylelint \"src/**/*.scss\" --fix --formatter verbose || echo \"lint faild for some file(s).\""
+    "format:css": "prettier --write \"src/sass/**/*.scss\" && stylelint \"src/sass/**/*.scss\" --fix --formatter verbose || echo \"lint faild for some file(s).\""
   },
   "repository": {
     "type": "git",
