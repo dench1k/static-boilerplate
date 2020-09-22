@@ -15,6 +15,7 @@ const svgstore = require("gulp-svgstore");
 const del = require("del");
 const server = require("browser-sync").create();
 const fileinclude = require("gulp-file-include");
+const gradient = require('gradient-string');
 
 // CONSTANTS
 const SRC_DIR = "src";
@@ -161,6 +162,13 @@ function serve(cb) {
   watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, refresh));
   watch(`${SRC_DIR}/**/*.html`, series(html, refresh));
   cb();
+  // eslint-disable-next-line no-console
+  console.log(gradient.rainbow.multiline([
+    "    .^====^.   ",
+    "   =( ^--^ )=  ",
+    "    /      \\ /~",
+    "  +( |    | )/"
+  ].join('\n')));
 }
 
 const dev = parallel(html, styles, scripts, fonts, images);
