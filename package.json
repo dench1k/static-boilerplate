@@ -78,7 +78,7 @@
       "prettier --write",
       "stylelint --fix"
     ],
-    "src/js/**/*.js": [
+    "src/js/*.js": [
       "prettier --write",
       "eslint --fix"
     ]

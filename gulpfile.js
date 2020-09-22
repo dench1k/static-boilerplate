@@ -75,7 +75,11 @@ function styles() {
 }
 
 function scripts() {
-  return src(`${SRC_DIR}/${JS_DIR}/**/*.js`, { sourcemaps: true })
+  return src([
+    `${SRC_DIR}/${JS_DIR}/lib/*.js`,
+    `${SRC_DIR}/${JS_DIR}/plugins/*.js`,
+    `${SRC_DIR}/${JS_DIR}/*.js`
+  ], { sourcemaps: true })
     .pipe(plumber())
     .pipe(concat("app.min.js"))
     .pipe(
