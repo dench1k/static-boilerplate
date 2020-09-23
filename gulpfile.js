@@ -15,6 +15,8 @@ const svgstore = require("gulp-svgstore");
 const del = require("del");
 const server = require("browser-sync").create();
 const fileinclude = require("gulp-file-include");
+const rev = require('gulp-rev');
+const revRewrite = require('gulp-rev-rewrite');
 const gradient = require('gradient-string');
 
 // CONSTANTS
@@ -116,7 +118,22 @@ function images() {
     .pipe(dest(`${BUILD_DIR}/${IMG_DIR}`));
 }
 
-// TODO: make automated
+function revision() {
+  return src(`${BUILD_DIR}/**/*.{css,js}`)
+    .pipe(rev())
+    .pipe(dest(BUILD_DIR))
+    .pipe(rev.manifest())
+    .pipe(dest(BUILD_DIR));
+}
+
+function rewrite() {
+  const manifest = src(`${BUILD_DIR}/rev-manifest.json`);
+
+  return src(`${BUILD_DIR}/**/*.html`)
+    .pipe(revRewrite({ manifest }))
+    .pipe(dest(BUILD_DIR));
+}
+
 function sprite() {
   return src(
     `${SRC_DIR}/${IMG_DIR}/${ICONS_DIR}/{icon-*,logo-*}.svg`
@@ -126,7 +143,6 @@ function sprite() {
     .pipe(dest(`${BUILD_DIR}/${IMG_DIR}/${ICONS_DIR}`));
 }
 
-// TODO: make automated
 function webp() {
   return src(`${BUILD_DIR}/${IMG_DIR}/**/*.{png,jpg}`)
     .pipe(webpPlugin({ quality: 85 }))
@@ -166,19 +182,21 @@ function serve(cb) {
   console.log(gradient.rainbow.multiline([
     "    .^====^.   ",
     "   =( ^--^ )=  ",
-    "    /      \\ /~",
+    "    /       \\ /~   ฅ^•ﻌ•^ฅ BUILD IS FINISHED [^._.^]ﾉ彡",
     "  +( |    | )/"
   ].join('\n')));
 }
 
 const dev = parallel(html, styles, scripts, fonts, images);
-const build = series(clean, dev);
+const build = series(clean, dev, revision, rewrite);
 
 exports.html = html;
 exports.fonts = fonts;
 exports.styles = styles;
 exports.scripts = scripts;
 exports.images = images;
+exports.revision = revision;
+exports.rewrite = rewrite;
 exports.sprite = sprite;
 exports.webp = webp;
 exports.clean = clean;
