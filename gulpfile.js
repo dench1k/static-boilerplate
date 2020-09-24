@@ -15,9 +15,10 @@ const svgstore = require("gulp-svgstore");
 const del = require("del");
 const server = require("browser-sync").create();
 const fileinclude = require("gulp-file-include");
-const rev = require('gulp-rev');
-const revRewrite = require('gulp-rev-rewrite');
-const gradient = require('gradient-string');
+const rev = require("gulp-rev");
+const revdel = require("gulp-rev-delete-original");
+const revRewrite = require("gulp-rev-rewrite");
+const gradient = require("gradient-string");
 
 // CONSTANTS
 const SRC_DIR = "src";
@@ -121,6 +122,7 @@ function images() {
 function revision() {
   return src(`${BUILD_DIR}/**/*.{css,js}`)
     .pipe(rev())
+    .pipe(revdel())
     .pipe(dest(BUILD_DIR))
     .pipe(rev.manifest())
     .pipe(dest(BUILD_DIR));
