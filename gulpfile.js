@@ -120,9 +120,9 @@ function images() {
 }
 
 function revision() {
-  return src(`${BUILD_DIR}/**/*.{css,js}`)
+  return src([`${BUILD_DIR}/**/{styles.min,app.min}.{css,js}`])
     .pipe(rev())
-    .pipe(revdel())
+    // .pipe(revdel())
     .pipe(dest(BUILD_DIR))
     .pipe(rev.manifest())
     .pipe(dest(BUILD_DIR));
@@ -132,7 +132,7 @@ function rewrite() {
   const manifest = src(`${BUILD_DIR}/rev-manifest.json`);
 
   return src(`${BUILD_DIR}/**/*.html`)
-    .pipe(revRewrite({ manifest }))
+    .pipe(revRewrite({manifest}))
     .pipe(dest(BUILD_DIR));
 }
 
@@ -175,9 +175,9 @@ function serve(cb) {
   );
   watch(
     `${SRC_DIR}/${SASS_DIR}/**/*.{scss,sass,css}`,
-    series(styles, refresh)
+    series(styles, revision, rewrite, refresh)
   );
-  watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, refresh));
+  watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, revision, rewrite, refresh));
   watch(`${SRC_DIR}/**/*.html`, series(html, refresh));
   cb();
   // eslint-disable-next-line no-console
