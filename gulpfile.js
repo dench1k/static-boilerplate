@@ -79,11 +79,14 @@ function styles() {
 }
 
 function scripts() {
-  return src([
-    `${SRC_DIR}/${JS_DIR}/lib/*.js`,
-    `${SRC_DIR}/${JS_DIR}/plugins/*.js`,
-    `${SRC_DIR}/${JS_DIR}/*.js`
-  ], { sourcemaps: true })
+  return src(
+    [
+      `${SRC_DIR}/${JS_DIR}/lib/*.js`,
+      `${SRC_DIR}/${JS_DIR}/plugins/*.js`,
+      `${SRC_DIR}/${JS_DIR}/*.js`,
+    ],
+    { sourcemaps: true }
+  )
     .pipe(plumber())
     .pipe(concat("app.min.js"))
     .pipe(
@@ -118,28 +121,28 @@ function images() {
     )
     .pipe(dest(`${BUILD_DIR}/${IMG_DIR}`));
 }
-
+// TODO: fix this
 function revision() {
-  return src([`${BUILD_DIR}/**/{styles.min,app.min}.{css,js}`])
-    .pipe(rev())
-    // .pipe(revdel())
-    .pipe(dest(BUILD_DIR))
-    .pipe(rev.manifest())
-    .pipe(dest(BUILD_DIR));
+  return (
+    src([`${BUILD_DIR}/**/{styles.min,app.min}.{css,js}`])
+      .pipe(rev())
+      // .pipe(revdel())
+      .pipe(dest(BUILD_DIR))
+      .pipe(rev.manifest())
+      .pipe(dest(BUILD_DIR))
+  );
 }
-
+// TODO: fix this
 function rewrite() {
   const manifest = src(`${BUILD_DIR}/rev-manifest.json`);
 
   return src(`${BUILD_DIR}/**/*.html`)
-    .pipe(revRewrite({manifest}))
+    .pipe(revRewrite({ manifest }))
     .pipe(dest(BUILD_DIR));
 }
 
 function sprite() {
-  return src(
-    `${SRC_DIR}/${IMG_DIR}/${ICONS_DIR}/{icon-*,logo-*}.svg`
-  )
+  return src(`${SRC_DIR}/${IMG_DIR}/${ICONS_DIR}/{icon-*,logo-*}.svg`)
     .pipe(svgstore({ inlineSvg: true }))
     .pipe(rename(`sprite_auto.svg`))
     .pipe(dest(`${BUILD_DIR}/${IMG_DIR}/${ICONS_DIR}`));
@@ -173,24 +176,25 @@ function serve(cb) {
     `${SRC_DIR}/${IMG_DIR}/**/*.{gif,png,jpg,jpeg,svg,webp}`,
     series(images, refresh)
   );
-  watch(
-    `${SRC_DIR}/${SASS_DIR}/**/*.{scss,sass,css}`,
-    series(styles, revision, rewrite, refresh)
-  );
-  watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, revision, rewrite, refresh));
+  watch(`${SRC_DIR}/${SASS_DIR}/**/*.{scss,sass,css}`, series(styles, refresh));
+  watch(`${SRC_DIR}/${JS_DIR}/**/*.js`, series(scripts, refresh));
   watch(`${SRC_DIR}/**/*.html`, series(html, refresh));
   cb();
   // eslint-disable-next-line no-console
-  console.log(gradient.rainbow.multiline([
-    "    .^====^.   ",
-    "   =( ^--^ )=  ",
-    "    /       \\ /~   ฅ^•ﻌ•^ฅ BUILD IS FINISHED [^._.^]ﾉ彡",
-    "  +( |    | )/"
-  ].join('\n')));
+  console.log(
+    gradient.rainbow.multiline(
+      [
+        "    .^====^.   ",
+        "   =( ^--^ )=  ",
+        "    /       \\ /~   ฅ^•ﻌ•^ฅ BUILD IS FINISHED [^._.^]ﾉ彡",
+        "  +( |    | )/",
+      ].join("\n")
+    )
+  );
 }
 
 const dev = parallel(html, styles, scripts, fonts, images);
-const build = series(clean, dev, revision, rewrite);
+const build = series(clean, dev);
 
 exports.html = html;
 exports.fonts = fonts;
