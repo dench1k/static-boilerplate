@@ -2,6 +2,7 @@ const { watch, series, parallel, src, dest, lastRun } = require("gulp");
 const plumber = require("gulp-plumber");
 const sass = require("gulp-sass");
 const concat = require("gulp-concat");
+const order = require("gulp-order");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
 const flexbugs = require("postcss-flexbugs-fixes");
@@ -80,14 +81,16 @@ function styles() {
 
 function scripts() {
   return src(
-    [
-      `${SRC_DIR}/${JS_DIR}/lib/*.js`,
-      `${SRC_DIR}/${JS_DIR}/plugins/*.js`,
-      `${SRC_DIR}/${JS_DIR}/*.js`,
-    ],
+    `${SRC_DIR}/${JS_DIR}/**/*.js`,
     { sourcemaps: true }
   )
     .pipe(plumber())
+    .pipe(order([
+      `lib/**/*.js`,
+      `plugins/**/*.js`,
+      `app.js`,
+      `*.js`
+    ]))
     .pipe(concat("app.min.js"))
     .pipe(
       babel({
