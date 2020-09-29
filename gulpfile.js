@@ -28,6 +28,8 @@ const FONTS_DIR = "fonts";
 const SASS_DIR = "sass";
 const CSS_DIR = "css";
 const JS_DIR = "js";
+const JS_LIB_DIR = "lib";
+const JS_PLUGINS_DIR = "plugins";
 const IMG_DIR = "images";
 const ICONS_DIR = "icons";
 
@@ -80,17 +82,16 @@ function styles() {
 }
 
 function scripts() {
-  return src(
-    `${SRC_DIR}/${JS_DIR}/**/*.js`,
-    { sourcemaps: true }
-  )
+  return src(`${SRC_DIR}/${JS_DIR}/**/*.js`, { sourcemaps: true })
     .pipe(plumber())
-    .pipe(order([
-      `lib/**/*.js`,
-      `plugins/**/*.js`,
-      `app.js`,
-      `*.js`
-    ]))
+    .pipe(
+      order([
+        `${JS_LIB_DIR}/**/*.js`,
+        `${JS_PLUGINS_DIR}/**/*.js`,
+        `app.js`,
+        `*.js`,
+      ])
+    )
     .pipe(concat("app.min.js"))
     .pipe(
       babel({
