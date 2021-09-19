@@ -1,0 +1,5 @@
+.grid::before {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+}
