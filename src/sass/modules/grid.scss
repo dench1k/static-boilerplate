@@ -2,5 +2,17 @@
 .grid::before {
   content: "";
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
+  background: rgb(255, 0, 0 / 0.1) repeating-linear-gradient(
+      to right,
+      white 0,
+      white 16px,
+      black 16px,
+      black 72px,
+      white 72px
+  );
 }
